@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia do Empreendedor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0F3C65; --dark:#0A1F35; --dark2:#0d2947; --ice:#F4F2EE; --white:#FEFEFE;
+    --yellow:#FFF2BA;
+    --s1:#0A5C40; --s1l:#E5F4EE; --s1m:#0D7A55;
+    --s2:#7A4000; --s2l:#FBF0E4; --s2m:#A85800;
+    --s3:#3A2675; --s3l:#EDEAF7; --s3m:#5540A8;
+    --line:rgba(255,255,255,.12);
+    --text-muted:rgba(255,255,255,.55);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% -10%, var(--dark2) 0%, transparent 45%),
+      radial-gradient(circle at 100% 110%, #071729 0%, transparent 50%),
+      var(--dark);
+    color:var(--white);
+    font-family:'Barlow',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+
+  .watermark-layer{
+    position:fixed; inset:0; z-index:0;
+    overflow:hidden; pointer-events:none;
+    display:flex; flex-wrap:wrap; align-content:flex-start;
+    transform:rotate(-14deg) scale(1.35); transform-origin:center;
+  }
+  .watermark-layer span{
+    font-family:'Barlow',sans-serif; font-size:12px; letter-spacing:.05em;
+    color:var(--white); opacity:0.045; white-space:nowrap; margin:20px 24px;
+  }
+
+  #app{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:26px 20px 60px;min-height:100vh;display:flex;flex-direction:column;}
+
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .topbar .dot{width:7px;height:7px;border-radius:50%;background:var(--yellow);flex:none;}
+  .brandword{font-size:12px;text-transform:uppercase;letter-spacing:.22em;color:rgba(255,255,255,.4);font-weight:700;}
+  .brandword b{color:var(--white);}
+
+  .q-progress{display:flex;gap:6px;margin-bottom:34px;flex-wrap:wrap;}
+  .q-dot{width:24px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);transition:background .3s;}
+  .q-dot.active{background:var(--yellow);}
+  .q-dot.done{background:rgba(255,255,255,.4);}
+
+  main{flex:1;display:flex;flex-direction:column;justify-content:center;}
+
+  /* intro */
+  .hero-h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(36px,7.5vw,58px);text-transform:uppercase;line-height:.98;color:var(--white);margin:0 0 20px;word-break:keep-all;}
+  .hero-h1 em{font-style:normal;color:var(--yellow);}
+  .hero-sub{font-size:16px;line-height:1.65;color:var(--text-muted);font-weight:300;max-width:48ch;margin:0 0 30px;}
+  .hero-caption{font-size:12px;color:rgba(255,255,255,.35);margin-top:14px;font-weight:400;}
+
+  .btn{font-family:'Barlow',sans-serif;font-weight:700;font-size:15px;border:none;border-radius:999px;padding:16px 30px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .15s ease, filter .15s ease, opacity .15s ease;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--yellow);color:var(--blue);}
+  .btn-primary:hover{filter:brightness(1.05);}
+  .btn-primary:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--text-muted);padding:16px 8px;font-weight:600;}
+  .btn-ghost:hover{color:var(--white);}
+
+  /* question */
+  .q-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(24px,5vw,34px);text-transform:uppercase;line-height:1.08;color:var(--white);margin:0 0 26px;max-width:22ch;word-break:keep-all;}
+  .q-hint{font-size:12.5px;color:rgba(255,255,255,.35);margin:-14px 0 20px;font-weight:400;}
+  input[type=text], textarea{width:100%;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:12px;padding:16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--white);outline:none;transition:border-color .15s ease;}
+  input[type=text]:focus, textarea:focus{border-color:var(--yellow);}
+  textarea{min-height:110px;resize:vertical;line-height:1.5;}
+  input::placeholder, textarea::placeholder{color:rgba(255,255,255,.3);}
+
+  .options{display:grid;gap:10px;}
+  .chip{text-align:left;background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:15px 18px;color:rgba(255,255,255,.72);font-size:14.5px;font-weight:400;cursor:pointer;transition:all .18s;}
+  .chip strong{display:block;font-size:15px;font-weight:700;color:var(--white);margin-bottom:2px;}
+  .chip:hover{border-color:var(--yellow);color:var(--white);background:rgba(255,242,186,.06);}
+  .chip.selected{border-color:var(--yellow);background:rgba(255,242,186,.1);color:var(--white);}
+  .chip.selected strong{color:var(--yellow);}
+
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:32px;}
+
+  .loading-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:60px 0;}
+  .spinner{width:38px;height:38px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--yellow);animation:spin .9s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{font-size:13px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;font-weight:600;}
+
+  /* ===== RESULT ===== */
+  .r-head{margin-bottom:8px;}
+  .r-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin:0 0 10px;}
+  .r-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(30px,6.5vw,46px);text-transform:uppercase;color:var(--white);line-height:1.02;margin:0 0 18px;word-break:keep-all;}
+  .r-diag{font-size:15.5px;line-height:1.7;color:rgba(255,255,255,.62);font-weight:300;max-width:60ch;margin:0 0 36px;}
+  .r-diag strong{color:var(--white);font-weight:700;}
+
+  .r-section-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin:0 0 16px;}
+
+  /* chart */
+  .chart{display:grid;gap:16px;margin-bottom:38px;}
+  .chart-row{cursor:pointer;padding:4px 2px;border-radius:8px;transition:background .2s;}
+  .chart-row:hover{background:rgba(255,255,255,.03);}
+  .chart-label{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;color:rgba(255,255,255,.72);font-weight:600;margin-bottom:8px;}
+  .chart-pct{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--white);}
+  .chart-track{height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;}
+  .chart-fill{height:100%;width:0%;border-radius:5px;transition:width 1.1s cubic-bezier(.16,1,.3,1);}
+
+  /* service cards */
+  .svc-card{border-radius:var(--radius);padding:26px 26px;margin-bottom:16px;}
+  .svc-card.featured{background:var(--ice);color:var(--blue);}
+  .svc-card.featured .svc-badge{display:inline-block;background:var(--yellow);color:var(--blue);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 13px;border-radius:100px;margin-bottom:14px;}
+  .svc-card.featured .svc-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(22px,4.5vw,30px);text-transform:uppercase;line-height:1.04;margin:0 0 14px;word-break:keep-all;}
+  .svc-card.featured .svc-pitch{font-size:14.5px;line-height:1.7;color:rgba(15,60,101,.65);font-weight:400;margin:0 0 18px;}
+  .svc-card .svc-list{list-style:none;margin:0;padding:0;display:grid;gap:9px;}
+  .svc-card .svc-list li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:rgba(15,60,101,.85);font-weight:500;}
+  .svc-card .svc-list li::before{content:'';flex:none;width:6px;height:6px;border-radius:50%;margin-top:6px;}
+
+  .svc-card.secondary{background:rgba(255,255,255,.03);border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;}
+  .svc-card.secondary .svc-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;color:var(--white);margin:0 0 3px;}
+  .svc-card.secondary .svc-teaser{font-size:12.5px;color:rgba(255,255,255,.4);font-weight:300;}
+  .svc-card.secondary .svc-tag{flex:none;font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;}
+
+  .svc-s1.featured{background:var(--s1l);} .svc-s1.featured .svc-name{color:var(--s1);} .svc-s1.featured .svc-list li::before{background:var(--s1);} .svc-s1.featured .svc-pitch{color:rgba(10,92,64,.7);} .svc-s1.featured .svc-list li{color:var(--s1m);}
+  .svc-s2.featured{background:var(--s2l);} .svc-s2.featured .svc-name{color:var(--s2);} .svc-s2.featured .svc-list li::before{background:var(--s2);} .svc-s2.featured .svc-pitch{color:rgba(122,64,0,.7);} .svc-s2.featured .svc-list li{color:var(--s2m);}
+  .svc-s3.featured{background:var(--s3l);} .svc-s3.featured .svc-name{color:var(--s3);} .svc-s3.featured .svc-list li::before{background:var(--s3);} .svc-s3.featured .svc-pitch{color:rgba(58,38,117,.7);} .svc-s3.featured .svc-list li{color:var(--s3m);}
+
+  .tag-s1{background:rgba(10,92,64,.25);color:#6DDAB4;} .tag-s2{background:rgba(122,64,0,.25);color:#F5A54A;} .tag-s3{background:rgba(58,38,117,.3);color:#B8A8F0;}
+
+  /* sinais */
+  .signal-grid{display:grid;gap:10px;margin-bottom:36px;}
+  .signal-card{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .signal-card .dot2{flex:none;width:6px;height:6px;border-radius:50%;background:var(--yellow);margin-top:7px;}
+  .signal-card p{margin:0;font-size:13.5px;line-height:1.55;color:rgba(255,255,255,.6);font-weight:300;}
+
+  /* resultados possíveis dentro do card destacado */
+  .svc-results{margin-top:20px;padding-top:18px;border-top:1px solid rgba(15,60,101,.12);}
+  .svc-results h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin:0 0 12px;color:rgba(15,60,101,.55);}
+  .svc-s1.featured .svc-results h4{color:rgba(10,92,64,.6);}
+  .svc-s2.featured .svc-results h4{color:rgba(122,64,0,.6);}
+  .svc-s3.featured .svc-results h4{color:rgba(58,38,117,.6);}
+  .svc-results ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;}
+  .svc-results li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;font-weight:600;}
+  .svc-results li .check{flex:none;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .svc-results li .check svg{width:9px;height:9px;}
+  .svc-s1.featured .svc-results li{color:var(--s1m);} .svc-s1.featured .svc-results li .check{background:var(--s1);color:var(--s1l);}
+  .svc-s2.featured .svc-results li{color:var(--s2m);} .svc-s2.featured .svc-results li .check{background:var(--s2m);color:var(--s2l);}
+  .svc-s3.featured .svc-results li{color:var(--s3m);} .svc-s3.featured .svc-results li .check{background:var(--s3m);color:var(--s3l);}
+
+  /* dicas rápidas */
+  .tips-box{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px;margin-bottom:16px;}
+  .tips-box .tips-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);font-weight:700;margin:0 0 4px;}
+  .tips-box .tips-sub{font-size:12.5px;color:rgba(255,255,255,.4);font-weight:300;margin:0 0 18px;}
+  .tips-list{list-style:none;margin:0;padding:0;display:grid;gap:14px;}
+  .tips-list li{display:flex;gap:12px;align-items:flex-start;}
+  .tips-list .tnum{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-top:1px;}
+  .tips-list p{margin:0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.65);font-weight:300;}
+
+  .quote-block{background:rgba(255,255,255,.03);border-left:3px solid var(--yellow);border-radius:0 10px 10px 0;padding:16px 20px;margin:30px 0;}
+  .quote-block p.q-text{font-style:italic;font-size:14px;color:rgba(255,255,255,.5);margin:0 0 8px;}
+  .quote-block p.q-connect{font-size:14px;color:rgba(255,255,255,.75);font-weight:500;margin:0;}
+
+  .combo-note{font-size:13.5px;line-height:1.7;color:rgba(255,255,255,.45);font-weight:300;margin:8px 0 36px;padding-top:24px;border-top:1px solid var(--line);}
+
+  .cta-wrap{margin-top:8px;padding:28px 24px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--radius);text-align:center;}
+  .cta-nudge{font-size:14px;line-height:1.6;color:rgba(255,255,255,.6);font-weight:400;margin:0 0 20px;max-width:46ch;margin-left:auto;margin-right:auto;}
+  .wa-btn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:var(--blue);font-family:'Barlow',sans-serif;font-weight:700;font-size:15.5px;padding:17px 30px;border-radius:999px;text-decoration:none;box-shadow:0 6px 20px rgba(255,242,186,.18);transition:transform .15s ease, box-shadow .15s ease;cursor:pointer;}
+  .wa-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,242,186,.28);}
+  .wa-btn:active{transform:translateY(0);}
+  .wa-btn svg{flex:none;}
+  .wa-caption{font-size:12px;color:rgba(255,255,255,.35);margin-top:14px;}
+
+  .restart{text-align:center;margin-top:22px;}
+  .restart button{background:none;border:none;color:rgba(255,255,255,.4);font-size:13px;text-decoration:underline;cursor:pointer;font-family:'Barlow',sans-serif;}
+</style>
+</head>
+<body>
+  <div class="watermark-layer" id="bgWatermark"></div>
+
+  <div id="app">
+    <div class="topbar">
+      <span class="dot"></span>
+      <div class="brandword">guia do <b>empreendedor</b></div>
+    </div>
+    <div id="progressWrap"></div>
+    <main id="stage"></main>
+  </div>
+
+<script>
+/* ===================== UTILS ===================== */
+function esc(str){
+  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function normalizeText(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function watermarkSpans(count){
+  let out = '';
+  for(let i=0;i<count;i++) out += '<span>Leonardo Monteiro · @leuosm</span>';
+  return out;
+}
+document.getElementById('bgWatermark').innerHTML = watermarkSpans(220);
+
+const WHATSAPP_NUMBER = '5584999830590';
+const WHATSAPP_DISPLAY = '(84) 99983-0590';
+
+/* ===================== SERVIÇOS ===================== */
+const SERVICES = {
+  s1:{
+    key:'s1', cls:'svc-s1', name:'Geração de Valor e Precificação', short:'Precificação e Valor',
+    pitch:'O preço hoje provavelmente nasce do custo ou do medo de perder cliente, e isso deixa a margem apertada e o desconto quase automático. O caminho é fazer o cliente entender o valor antes de perguntar o preço.',
+    bullets:['Diagnóstico do valor que o negócio realmente entrega','Comparação direta com o que a concorrência cobra hoje','Um preço novo, com argumento, não só um número','Um sistema que você consegue aplicar e ajustar sozinho depois'],
+    teaser:'Produto com margem real, preço que o cliente aceita pagar sem desconto.',
+    results:['Menos objeção na hora de fechar a venda','Mais dinheiro sobrando no fim do mês, vendendo a mesma quantidade','Confiança pra parar de dar desconto por hábito','Clientes que valorizam o que você entrega, não só o número do preço'],
+    quicktips:[
+      'Anote o preço de 3 concorrentes diretos essa semana e compare o que cada um entrega além do preço.',
+      'Na próxima vez que um cliente questionar o preço, pergunte o que ele esperava. A resposta mostra onde o valor não ficou claro.',
+      'Calcule quanto sobra líquido em cada venda, não só quanto entra no caixa.'
+    ]
+  },
+  s2:{
+    key:'s2', cls:'svc-s2', name:'Campanhas de Anúncios', short:'Visibilidade e Clientes',
+    pitch:'Ter um bom produto não basta se pouca gente sabe que ele existe. Na maioria das vezes o problema não é o orçamento, é a falta de direção antes de qualquer anúncio ir ao ar.',
+    bullets:['Estratégia definida antes de qualquer peça ser criada','Campanha ativa com objetivo claro, sem achismo','Relatório mostrando exatamente o que trouxe resultado','Ajuste contínuo com base no que os números mostram, não em opinião'],
+    teaser:'Movimento real, clientes novos chegando de forma constante.',
+    results:['Fluxo mais constante de gente nova conhecendo o negócio','Menos dependência de indicação aleatória para vender','Clareza sobre o que realmente traz retorno, em vez de achismo','Previsibilidade pra planejar estoque, agenda ou equipe com antecedência'],
+    quicktips:[
+      'Escolha um único canal pra focar essa semana e publique com constância, em vez de tentar estar em todos.',
+      'Peça pra 3 clientes satisfeitos indicarem seu negócio pra alguém que eles conhecem.',
+      'Anote de onde vieram seus últimos 10 clientes. Isso mostra onde vale investir energia primeiro.'
+    ]
+  },
+  s3:{
+    key:'s3', cls:'svc-s3', name:'Identidade e Posicionamento', short:'Identidade e Marca',
+    pitch:'Sem um motivo claro para ser escolhido, o negócio acaba competindo só por preço. Identidade de marca não é logo bonito, é o argumento que faz alguém escolher você sem pensar duas vezes.',
+    bullets:['Um propósito e um jeito de falar reconhecíveis em qualquer canal','Um lugar só seu na cabeça do cliente','Um diferencial que a concorrência não copia fácil','Consistência visual e de discurso em todos os pontos de contato'],
+    teaser:'Marca com argumento, diferencial que o concorrente não tem.',
+    results:['Cliente escolhendo você mesmo sem comparar preço','Comunicação com cara própria, em vez de parecer "mais um"','Reconhecimento que se constrói mesmo quando você não está vendendo ativamente','Base sólida pra crescer sem se perder pelo caminho'],
+    quicktips:[
+      'Escreva em uma frase por que alguém deveria te escolher em vez do concorrente mais próximo.',
+      'Peça pra 3 pessoas descreverem seu negócio com as próprias palavras e compare com o que você queria que elas dissessem.',
+      'Revise se redes sociais, atendimento e embalagem falam a mesma língua entre si.'
+    ]
+  }
+};
+
+const EQUIPE_SIGNAL = {
+  sozinho:'Tocando tudo sozinho(a), cada frente nova que você tenta assumir compete pelo mesmo tempo que já é curto.',
+  duas:'Com mais uma ou duas pessoas, já dá pra dividir frentes, mas sem prioridade clara o esforço se dilui entre vocês.',
+  pequena:'Com uma equipe pequena, o gargalo geralmente não é falta de gente, é falta de prioridade clara sobre onde focar.',
+  estruturada:'Com uma equipe estruturada, o ganho maior costuma vir de método, não de mais gente trabalhando.'
+};
+const TEMPO_SIGNAL = {
+  menos2h:'Com menos de 2h livres por semana, tentar resolver tudo por conta própria tende a travar antes de sair do papel.',
+  '2a5h':'Com poucas horas livres por semana, o que rende mais é focar em uma frente de cada vez, não em várias ao mesmo tempo.',
+  '5a10h':'Com um bom tempo disponível, dá pra avançar rápido, desde que a energia vá pro ponto certo primeiro.',
+  mais10h:'Com bastante tempo disponível, o risco é dispersar energia em várias frentes sem aprofundar nenhuma.'
+};
+
+const RAMO_LABEL = {
+  'alimentacao':'Alimentação', 'moda-beleza':'Moda e beleza', 'servicos':'Serviços profissionais',
+  'comercio':'Comércio e varejo', 'tecnologia':'Tecnologia e digital', 'outro':'Outro segmento'
+};
+const RAMO_NOTE = {
+  'alimentacao':'onde a concorrência por preço costuma ser dura e a diferenciação pesa muito.',
+  'moda-beleza':'onde a percepção de marca influencia tanto quanto o produto entregue.',
+  'servicos':'onde o cliente compra confiança tanto quanto o serviço em si.',
+  'comercio':'onde giro e preço percebido decidem quem vende mais.',
+  'tecnologia':'onde comunicar valor com clareza é ainda mais decisivo.',
+  'outro':'onde os fundamentos de preço, visibilidade e marca decidem o crescimento.'
+};
+
+const MOMENTO_LINE = {
+  'comecando': (empresa)=> empresa + ' está começando agora. Essa é a fase mais barata para acertar o rumo, antes de criar hábitos difíceis de mudar depois.',
+  'crescer': (empresa)=> empresa + ' já vende, e agora o desafio é crescer sem perder o controle do que já funciona.',
+  'margem': (empresa)=> empresa + ' vende, mas a margem fica curta no fim do mês. Isso quase sempre é sinal de preço mal calibrado, não de esforço insuficiente.',
+  'estagnado': (empresa)=> empresa + ' operava bem, mas as vendas pararam de crescer. Isso pede movimento novo, não só ajuste fino no que já existe.'
+};
+
+/* ===================== PALAVRAS-CHAVE DO DESAFIO ===================== */
+const KW = {
+  s1:['preco','valor','margem','lucro','desconto','cobrar','caro demais','barato demais'],
+  s2:['cliente','clientes','venda','vendas','divulga','marketing','instagram','redes sociais','anuncio','visibilidade','alcance','movimento'],
+  s3:['marca','identidade','diferencial','concorrencia','posicionamento','reconhec','comunicar','comunicacao']
+};
+function matchKeywords(text){
+  const norm = normalizeText(text);
+  const out = {s1:0,s2:0,s3:0};
+  if(!norm) return out;
+  Object.keys(KW).forEach(k=>{
+    KW[k].forEach(w=>{ if(norm.includes(normalizeText(w))) out[k]+=1.2; });
+  });
+  return out;
+}
+
+/* ===================== PERGUNTAS ===================== */
+const STEPS = [
+  { id:'nome', type:'text', q:'Antes de tudo, como você se chama?', placeholder:'Seu nome' },
+  { id:'negocio', type:'text', q:'E qual o nome do seu negócio?', placeholder:'Nome da empresa' },
+  { id:'ramo', type:'select', q:'Qual desses se parece mais com o seu segmento?', options:[
+      {v:'alimentacao', l:'Alimentação', sc:null},
+      {v:'moda-beleza', l:'Moda e beleza', sc:null},
+      {v:'servicos', l:'Serviços profissionais', sc:null},
+      {v:'comercio', l:'Comércio e varejo', sc:null},
+      {v:'tecnologia', l:'Tecnologia e digital', sc:null},
+      {v:'outro', l:'Outro segmento', sc:null}
+    ]},
+  { id:'momento', type:'select', q:'Qual dessas frases combina mais com o momento atual?', options:[
+      {v:'comecando', l:'Estou começando agora', sub:'Menos de 1 ano ou ainda estruturando', sc:{s3:1,s1:0.3}},
+      {v:'crescer', l:'Já vendo, mas quero crescer mais rápido', sub:'O negócio funciona e quero acelerar', sc:{s2:1}},
+      {v:'margem', l:'Vendo bem, mas a margem é pequena', sub:'Fatura, mas sobra pouco no fim do mês', sc:{s1:1.3}},
+      {v:'estagnado', l:'Estagnado, as vendas pararam de crescer', sub:'Já funcionou melhor do que funciona hoje', sc:{s2:1.3,s3:0.4}}
+    ]},
+  { id:'problemas', type:'multiselect', max:3, q:'Quais desses pontos mais incomodam você hoje?', hint:'Pode marcar até 3 opções', options:[
+      {v:'preco', l:'O cliente questiona meu preço com frequência', sc:{s1:2}},
+      {v:'poucosclientes', l:'Poucas pessoas novas conhecem o meu negócio', sc:{s2:2}},
+      {v:'diferencial', l:'Não sei explicar bem o que me diferencia da concorrência', sc:{s3:2}},
+      {v:'trabalhomuito', l:'Sinto que trabalho muito e sobra pouco no fim do mês', sc:{s1:1.5}},
+      {v:'semresultado', l:'Minha presença online não gera resultado nenhum', sc:{s2:1.5}}
+    ]},
+  { id:'cenario', type:'multiselect', max:2, q:'Quais dessas situações já aconteceram com você?', hint:'Pode marcar até 2 opções', options:[
+      {v:'desconto', l:'Cliente pergunta o preço, fico sem graça e acabo dando desconto', sc:{s1:1.5}},
+      {v:'redesparadas', l:'Minhas redes sociais não trazem clientes novos', sc:{s2:1.5}},
+      {v:'travo', l:'Quando perguntam o que me diferencia, eu travo na resposta', sc:{s3:1.5}},
+      {v:'naosei', l:'Já pensei em pedir ajuda, mas não sabia por onde começar', sc:{s1:0.3,s2:0.3,s3:0.3}}
+    ]},
+  { id:'foco90', type:'select', q:'Nos próximos 3 meses, o que faria mais diferença?', options:[
+      {v:'precojusto', l:'Cobrar um preço justo, sem medo de perder cliente', sc:{s1:2}},
+      {v:'maisclientes', l:'Ter clientes novos chegando de forma mais constante', sc:{s2:2}},
+      {v:'marcaforte', l:'Ter uma marca que as pessoas reconheçam e lembrem', sc:{s3:2}},
+      {v:'tudojunto', l:'Ter as três coisas organizadas de uma vez', sc:{s1:1,s2:1,s3:1}}
+    ]},
+  { id:'equipe', type:'select', q:'Hoje, quem toca o negócio no dia a dia?', options:[
+      {v:'sozinho', l:'Só eu', sc:null},
+      {v:'duas', l:'Eu e mais uma ou duas pessoas', sc:null},
+      {v:'pequena', l:'Já tenho uma equipe pequena', sc:null},
+      {v:'estruturada', l:'Tenho uma equipe estruturada', sc:null}
+    ]},
+  { id:'tempoSemanal', type:'select', q:'Quanto tempo por semana sobra pra pensar em melhorias, fora a rotina do dia a dia?', options:[
+      {v:'menos2h', l:'Menos de 2 horas', sc:null},
+      {v:'2a5h', l:'De 2 a 5 horas', sc:null},
+      {v:'5a10h', l:'De 5 a 10 horas', sc:null},
+      {v:'mais10h', l:'Mais de 10 horas', sc:null}
+    ]},
+  { id:'desafio', type:'textarea', q:'Se pudesse resolver um problema agora, qual seria?', placeholder:'Descreva com suas palavras' },
+  { id:'publico', type:'text', q:'Quem é o seu cliente ideal hoje?', placeholder:'Se souber. Pode pular se preferir', optional:true }
+];
+
+const TEMPOSEMANAL_LABEL = { menos2h:'menos de 2h', '2a5h':'de 2 a 5h', '5a10h':'de 5 a 10h', mais10h:'mais de 10h' };
+
+/* ===================== MOTOR DE PONTUAÇÃO ===================== */
+function computeScores(a){
+  const totals = {s1:0,s2:0,s3:0};
+  STEPS.forEach(step=>{
+    if(step.type!=='select' && step.type!=='multiselect') return;
+    const val = a[step.id];
+    if(!val) return;
+    const vals = Array.isArray(val) ? val : [val];
+    vals.forEach(v=>{
+      const opt = (step.options||[]).find(o=>o.v===v);
+      if(opt && opt.sc){
+        totals.s1 += opt.sc.s1||0;
+        totals.s2 += opt.sc.s2||0;
+        totals.s3 += opt.sc.s3||0;
+      }
+    });
+  });
+  const kw = matchKeywords(a.desafio);
+  totals.s1 += kw.s1; totals.s2 += kw.s2; totals.s3 += kw.s3;
+  return totals;
+}
+function rankServices(totals){
+  return [['s1',totals.s1],['s2',totals.s2],['s3',totals.s3]].sort((x,y)=>y[1]-x[1]).map(x=>x[0]);
+}
+function percentages(totals){
+  const sum = totals.s1+totals.s2+totals.s3;
+  if(sum<=0) return {s1:34,s2:33,s3:33};
+  return {
+    s1: Math.round(totals.s1/sum*100),
+    s2: Math.round(totals.s2/sum*100),
+    s3: Math.round(totals.s3/sum*100)
+  };
+}
+function ctaNudge(a){
+  const tight = a.tempoSemanal==='menos2h' || a.tempoSemanal==='2a5h';
+  if(a.equipe==='sozinho' && tight){
+    return 'Tocando o negócio sozinho(a) e com pouco tempo livre, faz mais sentido delegar isso a quem já faz do que tentar aprender tudo por conta própria.';
+  }
+  if(a.equipe==='sozinho'){
+    return 'Mesmo tocando o negócio sozinho(a), ter uma frente especializada cuidando disso libera tempo para o que só você pode fazer.';
+  }
+  return 'Com o time que você tem hoje, uma frente especializada nisso libera energia para o resto da operação.';
+}
+
+function buildWaMessage(r){
+  const lines = [];
+  lines.push('Oi Leonardo! Acabei de fazer o diagnóstico do *' + r.empresa + '* e quero te mandar o resultado:');
+  lines.push('');
+  lines.push('*Diagnóstico*');
+  lines.push(r.diagnostico);
+  lines.push('');
+  lines.push('*Frente recomendada: ' + r.recommended.name + '*');
+  lines.push(r.recommended.pitch);
+  lines.push('');
+  lines.push('*O que pode mudar:*');
+  r.recommended.results.slice(0,3).forEach(x=> lines.push('• ' + x));
+  if(r.quote){
+    lines.push('');
+    lines.push('*Sobre o desafio que descrevi:*');
+    lines.push('"' + r.quote.text + '"');
+  }
+  lines.push('');
+  lines.push('Quero entender melhor como aplicar isso no meu negócio.');
+  return lines.join('\n');
+}
+
+function buildResult(a){
+  const totals = computeScores(a);
+  const ranking = rankServices(totals);
+  const pct = percentages(totals);
+  const recommended = SERVICES[ranking[0]];
+  const secondary = [SERVICES[ranking[1]], SERVICES[ranking[2]]];
+  const nome = a.nome || 'Empreendedor(a)';
+  const empresa = a.negocio || 'seu negócio';
+  const ramoLabel = RAMO_LABEL[a.ramo] || '';
+  const ramoNote = RAMO_NOTE[a.ramo] || '';
+  const momentoFn = MOMENTO_LINE[a.momento];
+  let diag = momentoFn ? momentoFn(empresa) : (empresa + ' tem particularidades próprias que valem um olhar atento.');
+  if(ramoLabel){
+    diag += ' Isso pesa ainda mais no segmento de ' + ramoLabel.toLowerCase() + ', ' + ramoNote;
+  }
+  let quote = null;
+  if(a.desafio){
+    quote = { text:a.desafio, connect:'Isso está diretamente ligado ao que a frente de ' + recommended.short + ' resolve.' };
+  }
+  const signals = [];
+  if(a.equipe && EQUIPE_SIGNAL[a.equipe]) signals.push(EQUIPE_SIGNAL[a.equipe]);
+  if(a.tempoSemanal && TEMPO_SIGNAL[a.tempoSemanal]) signals.push(TEMPO_SIGNAL[a.tempoSemanal]);
+  if(ramoNote) signals.push('No segmento de ' + (ramoLabel||'').toLowerCase() + ', ' + ramoNote);
+  const resultPreview = {
+    nome:nome, empresa:empresa, recommended:recommended, diagnostico:diag, quote:quote
+  };
+  const waMsg = buildWaMessage(resultPreview);
+  return {
+    nome:nome, empresa:empresa, pct:pct, recommended:recommended, secondary:secondary,
+    diagnostico:diag, quote:quote, nudge:ctaNudge(a), signals:signals,
+    waHref:'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg)
+  };
+}
+
+/* ===================== ESTADO / RENDER ===================== */
+let state = { stage:'intro', stepIndex:0, answers:{} };
+const stageEl = document.getElementById('stage');
+const progressWrap = document.getElementById('progressWrap');
+
+function render(){
+  if(state.stage === 'intro'){ progressWrap.innerHTML=''; renderIntro(); return; }
+  if(state.stage === 'wizard'){ renderProgress(); renderWizardStep(); return; }
+  if(state.stage === 'loading'){ progressWrap.innerHTML=''; renderLoading(); return; }
+  if(state.stage === 'result'){ progressWrap.innerHTML=''; renderResult(); return; }
+}
+
+function renderIntro(){
+  stageEl.innerHTML = `
+    <h1 class="hero-h1">Vamos entender<br>seu <em>negócio.</em></h1>
+    <p class="hero-sub">Algumas perguntas rápidas e simples. No final, você recebe um retrato claro de onde focar primeiro.</p>
+    <button class="btn btn-primary" id="startBtn">Começar</button>
+    <p class="hero-caption">Leva menos de 1 minuto</p>
+  `;
+  document.getElementById('startBtn').onclick = () => { state.stage='wizard'; state.stepIndex=0; render(); };
+}
+
+function renderProgress(){
+  let html = '';
+  STEPS.forEach((s,i)=>{
+    let cls = i < state.stepIndex ? 'done' : (i===state.stepIndex ? 'active':'');
+    html += `<div class="q-dot ${cls}"></div>`;
+  });
+  progressWrap.innerHTML = `<div class="q-progress">${html}</div>`;
+}
+
+function renderWizardStep(){
+  const step = STEPS[state.stepIndex];
+  const saved = state.answers[step.id];
+  const isMulti = step.type === 'multiselect';
+  let fieldHtml = '';
+
+  if(step.type === 'text'){
+    fieldHtml = `<input type="text" id="fieldInput" placeholder="${esc(step.placeholder||'')}" value="${esc(saved||'')}">`;
+  } else if(step.type === 'textarea'){
+    fieldHtml = `<textarea id="fieldInput" placeholder="${esc(step.placeholder||'')}">${esc(saved||'')}</textarea>`;
+  } else if(step.type === 'select' || step.type === 'multiselect'){
+    const savedArr = isMulti ? (Array.isArray(saved)?saved:[]) : null;
+    fieldHtml = `<div class="options" id="fieldOptions">` +
+      step.options.map(o => {
+        const isSel = isMulti ? savedArr.includes(o.v) : (saved===o.v);
+        const inner = o.sub ? `<strong>${esc(o.l)}</strong>${esc(o.sub)}` : esc(o.l);
+        return `<button type="button" class="chip ${isSel?'selected':''}" data-v="${o.v}">${inner}</button>`;
+      }).join('') +
+      `</div><input type="hidden" id="fieldInput" value="${esc(isMulti ? (savedArr||[]).join(',') : (saved||''))}">`;
+  }
+
+  stageEl.innerHTML = `
+    <h2 class="q-title">${esc(step.q)}</h2>
+    ${step.hint ? `<p class="q-hint">${esc(step.hint)}</p>` : ''}
+    ${fieldHtml}
+    ${step.optional ? '<p class="q-hint" style="margin-top:14px;">Pergunta opcional.</p>' : ''}
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="backBtn">${state.stepIndex===0?'':'Voltar'}</button>
+      <button class="btn btn-primary" id="nextBtn">${state.stepIndex===STEPS.length-1?'Ver resultado':'Continuar'}</button>
+    </div>
+  `;
+
+  const input = document.getElementById('fieldInput');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function updateEnabled(){
+    const val = input.value.trim();
+    nextBtn.disabled = !val && !step.optional;
+  }
+  updateEnabled();
+
+  if(step.type === 'text' || step.type === 'textarea'){
+    input.addEventListener('input', updateEnabled);
+    input.focus();
+  } else {
+    let selected = isMulti ? (Array.isArray(saved)?saved.slice():[]) : null;
+    document.querySelectorAll('#fieldOptions .chip').forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        const v = chip.dataset.v;
+        if(isMulti){
+          const idx = selected.indexOf(v);
+          if(idx>-1){
+            selected.splice(idx,1);
+            chip.classList.remove('selected');
+          } else {
+            if(selected.length >= step.max) return;
+            selected.push(v);
+            chip.classList.add('selected');
+          }
+          input.value = selected.join(',');
+        } else {
+          document.querySelectorAll('#fieldOptions .chip').forEach(c=>c.classList.remove('selected'));
+          chip.classList.add('selected');
+          input.value = v;
+        }
+        updateEnabled();
+      });
+    });
+  }
+
+  document.getElementById('backBtn').onclick = ()=>{
+    if(state.stepIndex===0){ state.stage='intro'; render(); return; }
+    state.stepIndex--; render();
+  };
+  nextBtn.onclick = ()=>{
+    if(isMulti){
+      state.answers[step.id] = input.value ? input.value.split(',') : [];
+    } else {
+      state.answers[step.id] = input.value.trim();
+    }
+    if(state.stepIndex === STEPS.length-1){
+      state.stage='loading'; render();
+      setTimeout(()=>{ state.stage='result'; render(); }, 750);
+    } else {
+      state.stepIndex++; render();
+    }
+  };
+}
+
+function renderLoading(){
+  stageEl.innerHTML = `
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p class="loading-text">Cruzando suas respostas</p>
+    </div>
+  `;
+}
+
+/* ---------- resultado ---------- */
+function chartHtml(r){
+  const rows = [
+    {key:'s1', label:SERVICES.s1.short, pct:r.pct.s1, color:'var(--s1)'},
+    {key:'s2', label:SERVICES.s2.short, pct:r.pct.s2, color:'var(--s2m)'},
+    {key:'s3', label:SERVICES.s3.short, pct:r.pct.s3, color:'var(--s3m)'}
+  ];
+  return `<div class="chart">` + rows.map(row=>`
+      <div class="chart-row" data-target="svc-${row.key}">
+        <div class="chart-label"><span>${esc(row.label)}</span><span class="chart-pct">${row.pct}%</span></div>
+        <div class="chart-track"><div class="chart-fill" data-pct="${row.pct}" style="background:${row.color}"></div></div>
+      </div>
+    `).join('') + `</div>`;
+}
+function signalsHtml(r){
+  if(!r.signals.length) return '';
+  return `
+    <p class="r-section-label">O que suas respostas mostram</p>
+    <div class="signal-grid">
+      ${r.signals.map(s=>`<div class="signal-card"><span class="dot2"></span><p>${esc(s)}</p></div>`).join('')}
+    </div>`;
+}
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function featuredCardHtml(r){
+  const s = r.recommended;
+  return `
+    <div class="svc-card featured ${s.cls}" id="svc-${s.key}">
+      <span class="svc-badge">Faz mais sentido para você agora</span>
+      <h3 class="svc-name">${esc(s.name)}</h3>
+      <p class="svc-pitch">${esc(s.pitch)}</p>
+      <ul class="svc-list">${s.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+      <div class="svc-results">
+        <h4>Se isso for resolvido, o que muda</h4>
+        <ul>${s.results.map(b=>`<li><span class="check">${CHECK_SVG}</span>${esc(b)}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+}
+function tipsHtml(r){
+  const s = r.recommended;
+  return `
+    <div class="tips-box">
+      <p class="tips-label">Por onde começar essa semana</p>
+      <p class="tips-sub">Ideias simples que você já pode aplicar sozinho(a), antes mesmo de qualquer ajuda externa.</p>
+      <ul class="tips-list">
+        ${s.quicktips.map((t,i)=>`<li><span class="tnum">${i+1}</span><p>${esc(t)}</p></li>`).join('')}
+      </ul>
+    </div>`;
+}
+function secondaryCardsHtml(r){
+  return r.secondary.map(s=>`
+    <div class="svc-card secondary" id="svc-${s.key}">
+      <div><div class="svc-name">${esc(s.name)}</div><div class="svc-teaser">${esc(s.teaser)}</div></div>
+      <span class="svc-tag tag-${s.key}">${esc(s.short)}</span>
+    </div>`).join('');
+}
+function waIconSvg(){
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.24 0 4.35.87 5.93 2.46a8.3 8.3 0 0 1 2.45 5.92c0 4.61-3.76 8.37-8.38 8.37a8.4 8.4 0 0 1-4.27-1.17l-.3-.18-3.12.82.83-3.04-.2-.31a8.32 8.32 0 0 1-1.28-4.47c0-4.62 3.76-8.4 8.34-8.4m-4.6 4.8c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.7 2.68 4.19 3.71.58.26 1.04.41 1.4.53.59.19 1.12.16 1.54.1.47-.07 1.45-.6 1.65-1.17.21-.58.21-1.08.14-1.18-.06-.1-.22-.16-.47-.28-.24-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.13-.16.24-.63.79-.77.96-.14.16-.29.18-.53.06-.24-.12-1.02-.38-1.94-1.21-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.37.11-.5.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.36-.76-1.86-.2-.48-.4-.42-.55-.42h-.47Z"/></svg>`;
+}
+function renderResult(){
+  const r = buildResult(state.answers);
+  stageEl.innerHTML = `
+    <div class="r-head">
+      <p class="r-eyebrow">${esc(r.nome)} · ${esc(r.empresa)}</p>
+      <h2 class="r-title">O que vemos no seu negócio</h2>
+    </div>
+    <p class="r-diag">${esc(r.diagnostico)}</p>
+
+    ${signalsHtml(r)}
+
+    <p class="r-section-label">Como as três frentes se equilibram hoje</p>
+    ${chartHtml(r)}
+
+    ${featuredCardHtml(r)}
+    ${tipsHtml(r)}
+    ${secondaryCardsHtml(r)}
+
+    ${r.quote ? `
+    <div class="quote-block">
+      <p class="q-text">"${esc(r.quote.text)}"</p>
+      <p class="q-connect">${esc(r.quote.connect)}</p>
+    </div>` : ''}
+
+    <p class="combo-note">Quando as três frentes trabalham juntas, uma alimenta a outra: identidade dá o argumento, a campanha traz o cliente, e o preço certo garante que sobra dinheiro no fim do mês.</p>
+
+    <div class="cta-wrap">
+      <p class="cta-nudge">${esc(r.nudge)}</p>
+      <a class="wa-btn" href="${r.waHref}" target="_blank" rel="noopener">${waIconSvg()} Falar com Leonardo no WhatsApp</a>
+      <p class="wa-caption">${WHATSAPP_DISPLAY} · resposta rápida</p>
+    </div>
+
+    <div class="restart"><button id="restartBtn">Refazer</button></div>
+  `;
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('.chart-fill').forEach(el=>{
+        el.style.width = el.dataset.pct + '%';
+      });
+    });
+  });
+
+  document.querySelectorAll('.chart-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const target = document.getElementById(row.dataset.target);
+      if(target){
+        target.scrollIntoView({behavior:'smooth', block:'center'});
+        target.style.transition = 'box-shadow .3s ease';
+        target.style.boxShadow = '0 0 0 2px var(--yellow)';
+        setTimeout(()=>{ target.style.boxShadow=''; }, 900);
+      }
+    });
+  });
+
+  document.getElementById('restartBtn').onclick = ()=>{ state = {stage:'intro', stepIndex:0, answers:{}}; render(); };
+}
+
+render();
+</script>
+</body>
+</html>
